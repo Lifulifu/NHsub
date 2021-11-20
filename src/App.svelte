@@ -15,20 +15,6 @@
 		{val: "shadowverse", field: "parody"},
 		{val: "asanagi", field: "artist"},
 		{val: "rape", field: ""},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
-		{val: "asanagi", field: "artist"},
 	];
 	let books = [];
 	

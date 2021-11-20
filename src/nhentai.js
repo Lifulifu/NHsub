@@ -27,16 +27,14 @@ export default class Nhentai {
             returns 'en', 'ch', 'jp', null
         */
         for(let tag of book.tags) {
-            if(tag?.type != 'language')
-                continue;
             if(tag.name == 'english')
                 return this.lang.en;
             if(tag.name == 'chinese')
                 return this.lang.ch;
             if(tag.name == 'japanese')
                 return this.lang.jp
-            return this.lang.others;
         }
+        return this.lang.others;
     }
 
     getFlag(book) {
