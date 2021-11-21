@@ -8,5 +8,8 @@
       "js": ["build/bundle.js"],
       "css": ["build/bundle.css"]
     }
+  ],
+  "permissions": [
+    "storage"
   ]
 }

@@ -4,8 +4,6 @@
         
         <img class="book-cover" src={ nh.getThumbUrl(book) }
             alt="">
-            <!-- width={ book.images.cover.w }
-            height={ book.images.cover.h }> -->
 
         <div class="book-caption-wrap">
             <div class="book-caption">
@@ -23,8 +21,8 @@
 <script>
     import Nhentai from './nhentai';
     export let book = {};
+
     let nh = new Nhentai();
-    console.log(book.id, nh.getLang(book));
 </script>
 
 <style>
@@ -35,7 +33,7 @@
     .book-a {
         display: flex;
         flex-direction: column;
-        width: 200px;
+        width: 220px;
     }
 
     .book-cover {
@@ -50,7 +48,7 @@
         position: relative;
     }
     
-    .book-a:hover > .book-caption-wrap {
+    .book:hover .book-caption-wrap {
         overflow: visible;
     }
 

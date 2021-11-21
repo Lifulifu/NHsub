@@ -14,7 +14,7 @@ function createNHsubTab() {
 	return div.firstChild;
 }
 
-function OnTabClick(tab) {
+function onTabClick(tab) {
 	return function () {
 		// set selected class
 		let children = Array.from(tab.parentNode.childNodes);
@@ -28,7 +28,6 @@ function OnTabClick(tab) {
 		});
 
 		// remove original content and show svelte app
-		console.log('yo')
 		document.getElementById('content')?.remove();
 		document.getElementById(APP_ID).style.display = "block";
 	};
@@ -38,7 +37,7 @@ function setupNHsub() {
 	// add tab
 	let ul = document.querySelector('ul.menu.left');
 	let tab = createNHsubTab(TAB_NAME);
-	tab.onclick = OnTabClick(tab);
+	tab.addEventListener('click', onTabClick(tab), {'once': true});
 	ul.append(tab);
 	
 	// add svelte app container
