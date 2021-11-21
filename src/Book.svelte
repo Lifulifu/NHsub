@@ -61,9 +61,10 @@
         flex-direction: row;
         font-weight: 700;
         line-height: 15px;
-        overflow-y: visible;
+        overflow: visible;
         padding: 3px;
         position: absolute;
+        width: 100%;
     }    
     
     .book-caption .flag {

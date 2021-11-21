@@ -1,23 +1,68 @@
 
+<main>
+
+	<div class="container">
+		<h2>Subscribed</h2>
+		<div>
+			<Dropdown
+				class='field-input'
+				bind:selectedIndex={ selectedFieldIdx }
+				items={ fieldOptions } />
+			<input type="text" id="add-input" bind:value={ inputSubVal }>
+			<div class="btn btn-primary" on:click={ addSub(inputSubVal, inputSubField) }>add</div>
+		</div>
+		<div class="tag-container">
+			{#each subs as sub}
+				<Tag data={ sub }></Tag>
+			{/each}
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="container-title">
+			<h2>New Uploads</h2>
+			<i><TiRefresh/></i>
+		</div>
+		
+		<div class="books-container">
+			{#each books as book}
+				<Book book={book}></Book>
+			{/each}
+		</div>
+	</div>
+</main>
+
 <script>
 	import { onMount } from 'svelte';
 	import TiRefresh from 'svelte-icons/ti/TiRefresh.svelte'
+	import { Dropdown } from "carbon-components-svelte";
 
 	import Tag from './Tag.svelte';
 	import Book from './Book.svelte';
 	import Nhentai from './nhentai';
 
+	let nh = new Nhentai();
 	let settings = {
 		maxBooks: 40,
 		batchSize: 8,
 	};
-
-	let nh = new Nhentai();
+	
 	let subs = [];
 	let books = [];
-	let inputSubVal = '';
-	let inputSubField = '';
 	
+	let fieldOptions = [
+		{ id: 0, text: '-', val: '' },
+		{ id: 1, text: 'artist', val: 'artist' },
+		{ id: 2, text: 'parody', val: 'parody' },
+		{ id: 3, text: 'character', val: 'character' },
+		{ id: 4, text: 'tag', val: 'tag' }
+	]
+	let selectedFieldIdx = 0;
+	
+	let inputSubVal = '';
+	$: inputSubField = fieldOptions[selectedFieldIdx]['val'];
+
+
 	function addSub(val, field='') {
 		if(val.length == 0)
 			return;
@@ -81,35 +126,6 @@
 
 
 </script>
-
-<main>
-
-	<div class="container">
-		<h2>Subscribed</h2>
-		<div>
-			<input type="text" id="add-input" bind:value={ inputSubVal }>
-			<div class="btn btn-primary" on:click={ addSub(inputSubVal) }>add</div>
-		</div>
-		<div class="tag-container">
-			{#each subs as sub}
-				<Tag data={ sub }></Tag>
-			{/each}
-		</div>
-	</div>
-
-	<div class="container">
-		<div class="container-title">
-			<h2>New Uploads</h2>
-			<i><TiRefresh/></i>
-		</div>
-		
-		<div class="books-container">
-			{#each books as book}
-				<Book book={book}></Book>
-			{/each}
-		</div>
-	</div>
-</main>
 
 <style>
 	input {
