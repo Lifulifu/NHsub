@@ -3,17 +3,21 @@
 
 	<div class="container">
 		<h2>Subscribed</h2>
-		<div>
-			<Dropdown
-				class='field-input'
-				bind:selectedIndex={ selectedFieldIdx }
-				items={ fieldOptions } />
-			<input type="text" id="add-input" bind:value={ inputSubVal }>
-			<div class="btn btn-primary" on:click={ addSub(inputSubVal, inputSubField) }>add</div>
+		<div class="input-container">
+
+			<div class="input-item field-input">
+				<Dropdown
+					bind:selectedIndex={ selectedFieldIdx }
+					items={ fieldOptions } />
+			</div>
+
+			<input type="text" class="input-item str-input" bind:value={ inputSubVal }>
+			<div class="input-item btn-input btn btn-primary" on:click={ addSub(inputSubVal, inputSubField) }>add</div>
 		</div>
-		<div class="tag-container">
-			{#each subs as sub}
-				<Tag data={ sub }></Tag>
+
+		<div class="tags-container">
+			{#each subs as sub, idx}
+				<Tag data={sub} idx={idx} on:removeTag={removeTag}></Tag>
 			{/each}
 		</div>
 	</div>
@@ -25,9 +29,15 @@
 		</div>
 		
 		<div class="books-container">
-			{#each books as book}
-				<Book book={book}></Book>
-			{/each}
+			{#if booksSet}
+				{#each books as book, idx}
+					<Book book={book}></Book>
+				{/each}
+			{:else}
+				<div class="loading-container">
+					<div class="loading-bar" style="width: {100 * searchedSubs / subs.length}%"></div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </main>
@@ -36,6 +46,7 @@
 	import { onMount } from 'svelte';
 	import TiRefresh from 'svelte-icons/ti/TiRefresh.svelte'
 	import { Dropdown } from "carbon-components-svelte";
+	import "carbon-components-svelte/css/g90.css";
 
 	import Tag from './Tag.svelte';
 	import Book from './Book.svelte';
@@ -44,11 +55,13 @@
 	let nh = new Nhentai();
 	let settings = {
 		maxBooks: 40,
-		batchSize: 8,
+		batchSize: 3,
 	};
 	
 	let subs = [];
 	let books = [];
+	let booksSet = false;
+	let searchedSubs = 0;
 	
 	let fieldOptions = [
 		{ id: 0, text: '-', val: '' },
@@ -62,7 +75,6 @@
 	let inputSubVal = '';
 	$: inputSubField = fieldOptions[selectedFieldIdx]['val'];
 
-
 	function addSub(val, field='') {
 		if(val.length == 0)
 			return;
@@ -71,10 +83,8 @@
 			val: val,
 			field: field,
 		}];
-		console.log('add new sub.');
-
+		console.log('add new sub', field, val);
 		setToStorage({'subs': subs});
-		console.log('update subs to storage.')
 	}
 
 	async function searchSubsResultAll(subs) {
@@ -92,17 +102,21 @@
 			console.log(`searching query ${end}/${subs.length}`);
 			start = end;
 			end = Math.min(start+batchSize, subs.length);
+			searchedSubs = start;
 		}
+		searchedSubs = end;
 		return result.flat().flat();  // batch -> page -> book
 	}
 
 	function getFromStorage(key) {
+		console.log('get from storage', key);
 		return new Promise((resolve, reject) => 
 			chrome.storage.sync.get(key, (result) => { resolve(result); })
 		);
 	}
 	
 	function setToStorage(obj) {
+		console.log('set to storage', Object.keys(obj));
 		return new Promise((resolve, reject) =>
 			chrome.storage.sync.set(obj, () => { resolve(); })
 		);
@@ -112,25 +126,60 @@
 		let res = await searchSubsResultBatch(settings.batchSize);
 		res.sort((a, b) => parseInt(b['upload_date'] - a['upload_date']));
 		books = res.slice(0, settings.maxBooks);
+		console.log('books loaded');
 		console.log(books);
+	}
+
+	function removeTag(e) {
+		let idx = e.detail.idx;
+		subs.splice(idx, 1);
+		subs = subs; // to trigger update of reactive var
+		setToStorage({'subs': subs});
+		console.log('removed sub idx', idx);
 	}
 
 
 	
 	onMount(async () => {
-		console.log('NHsub app onMount.')
+		console.log('NHsub app onMount.');
 		let res = await getFromStorage('subs');
 		subs = res['subs'];
-		setBooks();
+		await setBooks();
+		booksSet = true;
+		console.log('booksSet', booksSet)
 	});
 
 
 </script>
 
 <style>
-	input {
+	.input-container {
+		align-items: center;
+		display: flex;
+		flex-direction: row;
+		height: 50px;
+		justify-content: center;
+	}
+	
+	.input-item {
+		margin: 2px;
+	}
+	
+	.input-container .field-input {
+		width: 150px;
+	}
+	
+	.input-container .str-input {
 		padding: 0 0.1em 0 1em;
-		height: 40px;
+		height: 34px;
+		border-radius: 0.3em;
+	}
+
+	.tags-container {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
 	}
 
 	.books-container {
@@ -138,6 +187,18 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		justify-content: center;
+	}
+
+	.loading-container {
+		height: 10px;
+		width: 500px;
+	}
+
+	.loading-bar {
+		background-color: rgb(237,37,83);
+		height: 100%;
+		left: 0;
+		transition: 500ms;
 	}
 
 	.container-title {
