@@ -4,7 +4,7 @@
 	<div class="container">
 		<h2>Subscribed</h2>
 		<div class="input-container"
-			on:keyup={ (e) => { if(e.key === 'Enter') addSub(inputSubVal, inputSubField); } }>
+			on:keyup={ (e) => { if(e.key === 'Enter') onAddClicked(); } }>
 
 			<div class="input-item field-input">
 				<Dropdown
@@ -14,14 +14,14 @@
 
 			<input type="text" class="input-item str-input" bind:value={ inputSubVal }>
 			<div class="input-item btn-input btn btn-primary"
-				on:click={ (e) => addSub(inputSubVal, inputSubField) }>
+				on:click={ (e) => onAddClicked() }>
 				add
 			</div>
 		</div>
 
 		<div class="tags-container">
-			{#each subs as {field, val} (`${sub.field}#${sub.val}`)}
-				<Tag data={sub} idx={sub.id} on:removeTag={ removeTag }></Tag>
+			{#each subs as {field, val}, idx }
+				<Tag field={field} val={val} idx={idx} on:removeTag={ removeTag }></Tag>
 			{/each}
 		</div>
 	</div>
@@ -33,19 +33,26 @@
 		</div>
 		
 		<div class="books-container">
+
 			{#if loading}
-			<div class="loading-container">
-				<div>
-					loading books... ({searchedSubs} / {subs.length})
+				<div class="loading-container">
+					<div>
+						loading books... ({searchedSubs} / {subs.length})
+					</div>
+					<div class="loading">
+						<div class="loading-bar" style="width: {100 * searchedSubs / subs.length}%"></div>
+					</div>
 				</div>
-				<div class="loading">
-					<div class="loading-bar" style="width: {100 * searchedSubs / subs.length}%"></div>
-				</div>
-			</div>
+
 			{:else}
-			{#each books as book (book.id)}
-				<Book book={book}></Book>
-			{/each}
+				{#if books.length == 0}
+					No books to be displayed! Subscribe to tags so we can search for newest books!
+				{:else}
+					{#each books as book }
+						<Book book={book}></Book>
+					{/each}
+				{/if}
+
 			{/if}
 		</div>
 	</div>
@@ -64,7 +71,7 @@
 	let nh = new Nhentai();
 	let settings = {
 		maxBooks: 40,
-		batchSize: 3,
+		batchSize: 4,
 	};
 	
 	let subs = [];
@@ -94,6 +101,11 @@
 		}];
 		console.log('add new sub', field, val);
 		setToStorage({'subs': subs});
+	}
+
+	function onAddClicked() {
+		addSub(inputSubVal, inputSubField);
+		inputSubVal = '';
 	}
 
 	async function searchSubsResultAll(subs) {
@@ -159,7 +171,8 @@
 	onMount(async () => {
 		console.log('NHsub app onMount.');
 		let res = await getFromStorage('subs');
-		subs = res['subs'];
+		subs = res['subs'] || [];
+		console.log('subs loaded:', subs);
 		onReloadClicked(true);
 	});
 
@@ -205,12 +218,14 @@
 
 	.loading {
 		background-color: #363636;
+		border-radius: 0.3em;
 		height: 10px;
 		width: 500px;
 	}
 
 	.loading-bar {
 		background-color: rgb(237,37,83);
+		border-radius: 0.3em;
 		height: 100%;
 		left: 0;
 		transition: 500ms;
