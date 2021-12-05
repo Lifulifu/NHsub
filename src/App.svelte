@@ -3,7 +3,8 @@
 
 	<div class="container">
 		<h2>Subscribed</h2>
-		<div class="input-container">
+		<div class="input-container"
+			on:keyup={ (e) => { if(e.key === 'Enter') addSub(inputSubVal, inputSubField); } }>
 
 			<div class="input-item field-input">
 				<Dropdown
@@ -12,12 +13,15 @@
 			</div>
 
 			<input type="text" class="input-item str-input" bind:value={ inputSubVal }>
-			<div class="input-item btn-input btn btn-primary" on:click={ addSub(inputSubVal, inputSubField) }>add</div>
+			<div class="input-item btn-input btn btn-primary"
+				on:click={ (e) => addSub(inputSubVal, inputSubField) }>
+				add
+			</div>
 		</div>
 
 		<div class="tags-container">
-			{#each subs as sub, idx}
-				<Tag data={sub} idx={idx} on:removeTag={removeTag}></Tag>
+			{#each subs as {field, val} (`${sub.field}#${sub.val}`)}
+				<Tag data={sub} idx={sub.id} on:removeTag={ removeTag }></Tag>
 			{/each}
 		</div>
 	</div>
@@ -25,18 +29,23 @@
 	<div class="container">
 		<div class="container-title">
 			<h2>New Uploads</h2>
-			<i><TiRefresh/></i>
+			<i class="reload" on:click={ () => onReloadClicked() }><TiRefresh/></i>
 		</div>
 		
 		<div class="books-container">
-			{#if booksSet}
-				{#each books as book, idx}
-					<Book book={book}></Book>
-				{/each}
-			{:else}
-				<div class="loading-container">
+			{#if loading}
+			<div class="loading-container">
+				<div>
+					loading books... ({searchedSubs} / {subs.length})
+				</div>
+				<div class="loading">
 					<div class="loading-bar" style="width: {100 * searchedSubs / subs.length}%"></div>
 				</div>
+			</div>
+			{:else}
+			{#each books as book (book.id)}
+				<Book book={book}></Book>
+			{/each}
 			{/if}
 		</div>
 	</div>
@@ -60,7 +69,7 @@
 	
 	let subs = [];
 	let books = [];
-	let booksSet = false;
+	let loading = true;
 	let searchedSubs = 0;
 	
 	let fieldOptions = [
@@ -109,25 +118,32 @@
 	}
 
 	function getFromStorage(key) {
-		console.log('get from storage', key);
+		console.log('get from storage:', key);
 		return new Promise((resolve, reject) => 
 			chrome.storage.sync.get(key, (result) => { resolve(result); })
 		);
 	}
 	
 	function setToStorage(obj) {
-		console.log('set to storage', Object.keys(obj));
+		console.log('set to storage:', Object.keys(obj));
 		return new Promise((resolve, reject) =>
 			chrome.storage.sync.set(obj, () => { resolve(); })
 		);
 	}
 	
 	async function setBooks() {
+		searchedSubs = 0;
 		let res = await searchSubsResultBatch(settings.batchSize);
 		res.sort((a, b) => parseInt(b['upload_date'] - a['upload_date']));
 		books = res.slice(0, settings.maxBooks);
-		console.log('books loaded');
-		console.log(books);
+	}
+
+	async function onReloadClicked(force=false) {
+		if(loading & !force) return;
+		loading = true;
+		await setBooks();
+		loading = false;
+		console.log('books loaded:', books);
 	}
 
 	function removeTag(e) {
@@ -144,9 +160,7 @@
 		console.log('NHsub app onMount.');
 		let res = await getFromStorage('subs');
 		subs = res['subs'];
-		await setBooks();
-		booksSet = true;
-		console.log('booksSet', booksSet)
+		onReloadClicked(true);
 	});
 
 
@@ -189,7 +203,8 @@
 		justify-content: center;
 	}
 
-	.loading-container {
+	.loading {
+		background-color: #363636;
 		height: 10px;
 		width: 500px;
 	}
@@ -206,6 +221,16 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
+	}
+
+	.reload {
+		border-radius: 50%;
+		cursor: pointer;
+		margin-left: 10px;
+	}
+
+	.reload:hover {
+		background-color: #505050;
 	}
 
 	i {
