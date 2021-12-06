@@ -30,8 +30,9 @@ There will be a detailed doc soon if anyone wants to make a pull request to make
 ## TODOs
 Please feel free for posting issues or make pull requests!
 - [ ] Import / Export tag list
-- [ ] Adjustable search batch size
+- [ ] Adjustable search batch size on UI
 - [ ] Indicate unchecked uploads (show a `new` icon on the cover)
+- [ ] Show which tag is this book from (tooltip?)
 
 
 
