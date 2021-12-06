@@ -20,7 +20,12 @@ Add subscribe feature to nhentai.net with chrome extension.
 5. If you can see `NHsub` in toolbar section of `nhentai.net`, then congrats!!
 
 ## Documentation
-There will be one soon if anyone wants to make a pull request to make this project better.
+There will be a detailed doc soon if anyone wants to make a pull request to make this project better, but here are some notes:
+- The `tag`s here are not actual nhentai tags, they are simply search strings with category condition (check [search](https://nhentai.net/info/) section). For example:
+  - A tag with category `artist` and value `yamada` will be converted to search string `artist:"yamada"`
+  - A tag with no category and value `loli` will simply be `loli`
+- We use nhentai search api to search for the **FIRST** search result page for each tag, and sort each upload by time.
+- To speed up, a batch of `N` search strings is queried each time. Currently `N` = 4. Setting higher values might be viewed as DDoS and blocked by nhentai server.
 
 ## TODOs
 Please feel free for posting issues or make pull requests!
