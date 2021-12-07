@@ -10,14 +10,11 @@ Add subscribe feature to nhentai.net with chrome extension.
 ![Usage](https://github.com/Lifulifu/NHsub/blob/main/public/images/usage.PNG)
 
 ## Install
-1. **Clone** this repo (if you have git), or press `Code` -> `Download ZIP` and unzip it.
-
-![download zip](https://github.com/Lifulifu/NHsub/blob/main/public/images/install.PNG)
-
+1. [[Download]](https://github.com/Lifulifu/NHsub/releases) zip file of the latest release and unzip it.
 2. Type `chrome://extensions` in chrome search bar and enter the page.
 3. Enable `Developer mode` (top right).
 4. Click `Load unpacked` (top left) and choose `public` folder.
-5. If you can see `NHsub` in toolbar section of `nhentai.net`, then congrats!!
+5. If you can see `NHsub` in toolbar section of `nhentai.net`, DONE!!
 
 ## Documentation
 There will be a detailed doc soon if anyone wants to make a pull request to make this project better, but here are some notes:
