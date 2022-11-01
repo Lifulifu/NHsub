@@ -1,12 +1,18 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "NHsub",
   "version": "1.0.0",
   "content_scripts": [
     {
-      "matches": ["https://nhentai.net/*"],
-      "js": ["build/bundle.js"],
-      "css": ["build/bundle.css"]
+      "matches": [
+        "https://nhentai.net/*"
+      ],
+      "js": [
+        "build/bundle.js"
+      ],
+      "css": [
+        "build/bundle.css"
+      ]
     }
   ],
   "permissions": [

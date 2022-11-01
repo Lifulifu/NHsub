@@ -7,8 +7,6 @@ Add subscribe feature to nhentai.net with chrome extension.
 2. Add tags you want to subscribe to in the `Subscribed` section. 
 3. Click reload icon to show the newest uploads of all your subscribed tags in `New Uploads` section.
 
-![Usage](https://github.com/Lifulifu/NHsub/blob/main/public/images/usage.PNG)
-
 ## Install
 ### English
 1. [[Download]](https://github.com/Lifulifu/NHsub/releases) zip file of the latest release and unzip it. 
